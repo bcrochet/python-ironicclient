@@ -309,6 +309,81 @@ class TestBaremetalList(TestBaremetal):
         self.assertEqual(datalist, tuple(data))
 
 
+class TestBaremetalPower(TestBaremetal):
+    def setUp(self):
+        super(TestBaremetalPower, self).setUp()
+
+        # Get the command object to test
+        self.cmd = baremetal.PowerBaremetal(self.app, None)
+
+    def test_baremetal_reboot_no_options(self):
+        arglist = []
+        verifylist = []
+
+        self.assertRaises(oscutils.ParserException,
+                          self.check_parser,
+                          self.cmd, arglist, verifylist)
+
+    def test_baremetal_power_uuid_only(self):
+        arglist = ['node_uuid']
+        verifylist = [('node', 'node_uuid')]
+
+        self.assertRaises(oscutils.ParserException,
+                          self.check_parser,
+                          self.cmd, arglist, verifylist)
+
+    def test_baremetal_power_on(self):
+        arglist = ['node_uuid', '--on']
+        verifylist = [('node', 'node_uuid'),
+                      ('on', True)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.baremetal_mock.node.set_power_state.assert_called_once_with(
+            'node_uuid', 'on')
+
+    def test_baremetal_power_off(self):
+        arglist = ['node_uuid', '--off']
+        verifylist = [('node', 'node_uuid'),
+                      ('off', True)]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.baremetal_mock.node.set_power_state.assert_called_once_with(
+            'node_uuid', 'off')
+
+
+class TestBaremetalReboot(TestBaremetal):
+    def setUp(self):
+        super(TestBaremetalReboot, self).setUp()
+
+        # Get the command object to test
+        self.cmd = baremetal.RebootBaremetal(self.app, None)
+
+    def test_baremetal_reboot_no_options(self):
+        arglist = []
+        verifylist = []
+
+        self.assertRaises(oscutils.ParserException,
+                          self.check_parser,
+                          self.cmd, arglist, verifylist)
+
+    def test_baremetal_reboot_uuid_only(self):
+        arglist = ['node_uuid']
+        verifylist = [('node', 'node_uuid')]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.baremetal_mock.node.set_power_state.assert_called_once_with(
+            'node_uuid', 'reboot')
+
+
 class TestBaremetalSet(TestBaremetal):
     def setUp(self):
         super(TestBaremetalSet, self).setUp()
