@@ -124,6 +124,13 @@ class ShowBaremetal(show.ShowOne):
     """Show baremetal node details"""
 
     log = logging.getLogger(__name__ + ".ShowBaremetal")
+    LONG_FIELDS = [
+        'extra',
+        'properties',
+        'ports',
+        'driver_info',
+        'driver_internal_info'
+    ]
 
     def get_parser(self, prog_name):
         parser = super(ShowBaremetal, self).get_parser(prog_name)
@@ -138,6 +145,9 @@ class ShowBaremetal(show.ShowOne):
             action='store_true',
             default=False,
             help='<node> is an instance UUID.')
+        parser.add_argument(
+            '--long',
+            action='store_true')
         return parser
 
     def take_action(self, parsed_args):
@@ -151,6 +161,9 @@ class ShowBaremetal(show.ShowOne):
             node = oscutils.find_resource(baremetal_client.node,
                                           parsed_args.node)._info
         node.pop("links", None)
+        if not parsed_args.long:
+            for field in self.LONG_FIELDS:
+                node.pop(field, None)
 
         return zip(*sorted(six.iteritems(node)))
 
