@@ -18,6 +18,7 @@ import copy
 
 from openstackclient.tests import utils as oscutils
 
+from ironicclient import exc
 from ironicclient.osc.v1 import baremetal
 from ironicclient.tests.unit.osc.v1 import fakes as baremetal_fakes
 
@@ -355,6 +356,56 @@ class TestBaremetalPower(TestBaremetal):
 
         self.baremetal_mock.node.set_power_state.assert_called_once_with(
             'node_uuid', 'off')
+
+
+class TestBaremetalProvisionState(TestBaremetal):
+    def setUp(self):
+        super(TestBaremetalProvisionState, self).setUp()
+
+        # Get the command object to test
+        self.cmd = baremetal.ProvisionStateBaremetal(self.app, None)
+
+    def test_baremetal_provision_state_not_active_and_configdrive(self):
+        arglist = ['node_uuid',
+                   '--rebuild',
+                   '--config-drive', 'path/to/drive']
+        verifylist = [
+            ('node', 'node_uuid'),
+            ('provision_state', 'rebuild'),
+            ('config_drive', 'path/to/drive'),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.assertRaises(exc.CommandError,
+                          self.cmd.take_action,
+                          parsed_args)
+
+    def test_baremetal_provision_state_active_and_configdrive(self):
+        arglist = ['node_uuid',
+                   '--active',
+                   '--config-drive', 'path/to/drive']
+        verifylist = [
+            ('node', 'node_uuid'),
+            ('provision_state', 'active'),
+            ('config_drive', 'path/to/drive'),
+        ]
+
+        parsed_args = self.check_parser(self.cmd, arglist, verifylist)
+
+        self.cmd.take_action(parsed_args)
+
+        self.baremetal_mock.node.set_provision_state.assert_called_once_with(
+            'node_uuid', 'active', configdrive='path/to/drive')
+
+    def test_baremetal_provision_state_too_many_params(self):
+        arglist = ['node_uuid',
+                   '--active',
+                   '--rebuild']
+
+        self.assertRaises(oscutils.ParserException,
+                          self.check_parser,
+                          self.cmd, arglist, [])
 
 
 class TestBaremetalReboot(TestBaremetal):
