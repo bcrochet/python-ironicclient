@@ -44,7 +44,7 @@ class TestBaremetalCreate(TestBaremetal):
             ))
 
         # Get the command object to test
-        self.cmd = baremetal.CreateBaremetal(self.app, None)
+        self.cmd = baremetal.CreateBaremetalNode(self.app, None)
         self.arglist = ['--driver', 'fake_driver']
         self.verifylist = [('driver', 'fake_driver')]
         self.collist = (
@@ -173,7 +173,7 @@ class TestBaremetalDelete(TestBaremetal):
             ))
 
         # Get the command object to test
-        self.cmd = baremetal.DeleteBaremetal(self.app, None)
+        self.cmd = baremetal.DeleteBaremetalNode(self.app, None)
 
     def test_baremetal_delete(self):
         arglist = ['xxx-xxxxxx-xxxx']
@@ -205,7 +205,7 @@ class TestBaremetalList(TestBaremetal):
         ]
 
         # Get the command object to test
-        self.cmd = baremetal.ListBaremetal(self.app, None)
+        self.cmd = baremetal.ListBaremetalNode(self.app, None)
 
     def test_baremetal_list_no_options(self):
         arglist = []
@@ -218,7 +218,6 @@ class TestBaremetalList(TestBaremetal):
 
         # Set expected values
         kwargs = {
-            'detail': False,
             'marker': None,
             'limit': None,
         }
@@ -322,7 +321,7 @@ class TestBaremetalSet(TestBaremetal):
             ))
 
         # Get the command object to test
-        self.cmd = baremetal.SetBaremetal(self.app, None)
+        self.cmd = baremetal.SetBaremetalNode(self.app, None)
 
     def test_baremetal_set_no_options(self):
         arglist = []
@@ -392,7 +391,7 @@ class TestBaremetalShow(TestBaremetal):
             ))
 
         # Get the command object to test
-        self.cmd = baremetal.ShowBaremetal(self.app, None)
+        self.cmd = baremetal.ShowBaremetalNode(self.app, None)
 
     def test_baremetal_show(self):
         arglist = ['xxx-xxxxxx-xxxx']
@@ -407,7 +406,7 @@ class TestBaremetalShow(TestBaremetal):
         args = ['xxx-xxxxxx-xxxx']
 
         self.baremetal_mock.node.get.assert_called_with(
-            *args
+            *args, fields=None
         )
 
         collist = (
@@ -456,7 +455,7 @@ class TestBaremetalShow(TestBaremetal):
         args = ['xxx-xxxxxx-xxxx']
 
         self.baremetal_mock.node.get_by_instance_uuid.assert_called_with(
-            *args
+            *args, fields=None
         )
 
 
@@ -472,7 +471,7 @@ class TestBaremetalUnset(TestBaremetal):
             ))
 
         # Get the command object to test
-        self.cmd = baremetal.UnsetBaremetal(self.app, None)
+        self.cmd = baremetal.UnsetBaremetalNode(self.app, None)
 
     def test_baremetal_unset_no_options(self):
         arglist = []

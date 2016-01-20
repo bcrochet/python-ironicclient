@@ -20,7 +20,7 @@ from openstackclient.common import utils
 
 LOG = logging.getLogger(__name__)
 
-DEFAULT_BAREMETAL_API_VERSION = '1.6'
+DEFAULT_BAREMETAL_API_VERSION = '1.14'
 API_VERSION_OPTION = 'os_baremetal_api_version'
 API_NAME = 'baremetal'
 LAST_KNOWN_API_VERSION = 14
